@@ -1,0 +1,245 @@
+const style = document.createElement("style");
+style.textContent = `
+      #sticky-drawer-container {
+          position: fixed;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          z-index: 1000;
+      }
+
+      #drawer-tab {
+          background-color: #f0ad4e;
+          color: white;
+          padding: 10px 12px;
+          text-align: center;
+          cursor: default;
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 6px;
+          z-index: 1001;
+          transition: bottom 0.3s ease-in-out;
+          min-width: 260px;
+          box-sizing: border-box;
+      }
+
+      .drawer-tab-title {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 1em;
+          transition: font-size 0.2s ease-in-out;
+      }
+
+      #drawer-tab.open {
+          bottom: calc(100% - 40px);
+      }
+
+      .chevron {
+          transition: transform 0.3s ease-in-out;
+          transform: rotate(0deg);
+          cursor: pointer;
+          display: inline-block;
+          flex-shrink: 0;
+      }
+
+      #drawer-tab.open .chevron {
+          transform: rotate(180deg);
+      }
+
+      #drawer-content-wrapper {
+          background-color: white;
+          box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+          overflow: hidden;
+          position: relative;
+          opacity: 0;
+          transform: translateY(10px);
+          transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+          z-index: 1000;
+      }
+
+      #drawer-content-wrapper.open {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      #drawer-content {
+          opacity: 0;
+          pointer-events: none;
+          padding: 20px;
+          gap: 15px;
+          width: 100%;
+          height: auto;
+          transition: opacity 0.3s ease-in-out;
+          display: flex;
+          flex-direction: column;
+      }
+
+      #drawer-content.open {
+          display: flex;
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .swiper-wrapper {
+          display: flex;
+      }
+
+      .swiper-slide {
+          width: 100%;
+          flex-shrink: 0;
+          padding: 15px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-sizing: border-box;
+          position: relative;
+      }
+
+      .pokemon-header {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+          word-break: break-word;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px; /* This gap will be between the name and the (i) icon container */
+      }
+      .pokemon-header > span:first-child { /* The name part */
+          display: inline-block;
+      }
+
+
+      .pokemon-image {
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
+          margin-bottom: 10px;
+      }
+
+      .pokemon-description {
+          margin-bottom: 15px;
+          font-size: 0.9em;
+          color: #555;
+          word-break: break-word;
+      }
+
+      .pokemon-button {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 8px 15px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 1em;
+      }
+
+      .tooltip-container {
+          position: relative;
+          display: inline-block;
+      }
+
+      .tooltip-text {
+          visibility: hidden;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          position: absolute;
+          z-index: 20;
+          opacity: 0;
+          transition: opacity 0.3s, transform 0.3s;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          box-sizing: border-box;
+          padding: 5px 8px;
+          font-size: 0.85rem;
+          bottom: calc(100% + 5px);
+          left: 50%;
+          transform: translateX(-50%);
+          white-space: nowrap; /* Default for most tooltips */
+      }
+
+      .tooltip-container:hover .tooltip-text {
+          visibility: visible;
+          opacity: 1;
+      }
+
+      .tooltip-arrow {
+          display: none;
+      }
+
+      .type-tooltip-trigger-container { /* Container for the (i) and its tooltip */
+          display: inline-flex;
+          align-items: center;
+          vertical-align: middle; /* Helps align the trigger with the Pokémon name text */
+      }
+
+      .type-tooltip-trigger { /* The (i) icon itself */
+          font-size: 0.8rem;   /* Adjusted font size for the 'i' symbol */
+          font-weight: bold;
+          color: #007bff;     /* Blue color for the 'i' symbol */
+          cursor: help;
+          user-select: none;
+          padding: 0 3px;      /* Small padding around the 'i' if needed */
+      }
+
+      .type-tooltip-content {
+          font-size: 0.75rem;
+          padding: 4px 8px;
+          min-width: auto;
+          white-space: nowrap; /* Force one line */
+          line-height: 1.3;
+          text-align: left;
+          /* Positioning (bottom, left, transform) inherited from .tooltip-text by default */
+      }
+
+      @media (max-width: 767px) { /* Mobile breakpoint */
+          .type-tooltip-content {
+              bottom: auto; /* Reset default bottom positioning */
+              top: 50%;     /* Vertically center relative to trigger height */
+              left: calc(100% + 8px); /* Position 8px to the right of trigger */
+              transform: translateY(-50%); /* Adjust for vertical centering */
+          }
+      }
+
+      #drawer-navigation { display: none; }
+      #drawer-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: none;
+          opacity: 0; transition: opacity 0.3s ease-in-out;
+      }
+      #drawer-overlay.open { opacity: 1; display: block; }
+
+      .tab-navigation { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+      .tab-navigation button {
+          background: none; border: none; color: white; cursor: pointer;
+          padding: 0 5px; font-size: 1.2em; outline: none; line-height: 1;
+      }
+      .tab-navigation .page-count {
+          font-size: 0.9em; min-width: 40px; text-align: center; white-space: nowrap;
+      }
+      .loading-message { text-align: center; padding: 20px; color: #777; font-style: italic; width: 100%;}
+
+      @media (min-width: 768px) { .swiper-slide { width: 50%; } }
+      @media (min-width: 1024px) { .swiper-slide { width: 25%; } }
+      @media (max-width: 420px) {
+          #drawer-tab { padding: 10px 8px; gap: 5px; }
+          .drawer-tab-title { font-size: 0.85em; }
+          .tab-navigation .page-count { font-size: 0.8em; min-width: 35px; }
+          .tab-navigation button { font-size: 1.1em; padding: 0 3px; }
+      }
+      @media (max-width: 360px) {
+          .drawer-tab-title { display: none; }
+          #drawer-tab { justify-content: center; gap: 8px; }
+          .tab-navigation .page-count { min-width: 30px; }
+      }
+  `;
+document.head.appendChild(style);

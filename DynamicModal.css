@@ -1,0 +1,296 @@
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+    .contact-form__form{
+        display:flex;
+        flex-direction:column;
+        height: 300px;
+    }
+
+    .header{
+        background-color: rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid black;
+    }
+
+    .site-wrapper{
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    #contact-us-button{
+        display: inline-block;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #6B8E23;
+        color: #FFFFFF;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        outline: none;
+        width:40%;
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    #contact-us-button:hover {
+        background-color: #556B2F;
+    }
+
+    #contact-us-button:focus {
+        outline: 2px solid #ADD8E6;
+        outline-offset: 2px;
+    }
+
+    #contact-us-button.disabled {
+        background-color: #D3D3D3;
+        color: #A9A9A9;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    #contact-us-button:active {
+        background-color: #3E531F;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        transform: translateY(1px);
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: #000;
+        text-decoration: none;
+    }
+
+    #multiStepFormContainer {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #progressBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 33.33%;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-step .icon {
+      background-color: white;
+      color: #ccc;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .progress-step .text {
+      font-size: 12px;
+      color: #007bff;
+      white-space: nowrap;
+      padding-top: 0px;
+      padding-bottom: 0px;
+    }
+
+    .progress-step.active .icon {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .progress-step.completed .icon {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .progress-step.completed .icon::after {
+      content: "✔";
+      font-size: 14px;
+      color: white;
+      background-color: green;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: -10px;
+      right: 30%;
+    }
+
+    .progress-step.active .text {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .progress-line {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #ccc;
+      z-index: 0;
+    }
+
+    .progress-line > div {
+      background-color: #007bff;
+      height: 100%;
+      width: 0%;
+    }
+
+    .step {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: calc(100% - 12px);
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .prev-step {
+      background-color: #6c757d;
+      margin-right: 10px;
+    }
+
+    .prev-step:hover {
+      background-color: #545b62;
+    }
+
+    .step-3 {
+      text-align: center;
+    }
+
+    .step-3 h2 {
+      color: green;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      margin-top: 0;
+    }
+
+    .hs-button {
+      margin: 0;
+      cursor: pointer;
+      display: inline-block;
+      border-radius: 4px;
+      position: relative;
+      text-align: center;
+      background-color: #2c2d2c;
+      color: #fff;
+      line-height: 41px;
+      padding: 0 23px;
+      font-weight: 600;
+      border: 2px solid rgba(102, 218, 199, .2);
+      -webkit-transition: .4s ease-in-out;
+      transition: .4s ease-in-out;
+      height: 50px;
+      width: 100%;
+    }
+    
+    #checkboxForm{
+        width:10px;
+        height:10px;
+    }
+
+    @media screen and (max-width: 500px) {
+        .progress-step.completed .icon::after {
+            right:20%;
+        }
+    }
+`;
+document.head.appendChild(styleElement);
