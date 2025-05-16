@@ -158,8 +158,7 @@ async function renderPokemonSlides() {
       const stats = details.stats
         .map((stat) => `${stat.stat.name.replace("-", " ")}: ${stat.base_stat}`)
         .join("<br>");
-      let imageSrc =
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAEElEQVR42mP8z8AIMA0CBkKYH/cAAAAASUVORK5CYII=";
+      let imageSrc = null;
       if (details.sprites?.other?.["official-artwork"]?.front_default)
         imageSrc = details.sprites.other["official-artwork"].front_default;
       else if (details.sprites?.other?.["dream-world"]?.front_default)
